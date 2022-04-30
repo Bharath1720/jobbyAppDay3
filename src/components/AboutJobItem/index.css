@@ -1,0 +1,103 @@
+.job-items-details-view-container {
+  background-color: #000000;
+  min-height: 100vh;
+  padding: 50px;
+}
+
+.ul-job-item-details-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0;
+}
+.job-item-details-main {
+  background-color: #272727;
+  padding: 30px;
+  border-radius: 10px;
+}
+.about-job-item-description-text {
+  line-height: 28x;
+  font-size: 22px;
+}
+.about-job-description-heading {
+  font-size: 32px;
+}
+.visit-anchor-text {
+  text-decoration: none;
+  font-size: 20px;
+  font-weight: bold;
+  color: #6366f1;
+}
+.visit-color {
+  color: #6366f1;
+}
+.about-description-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0px;
+}
+.li-job-item-details-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 30%;
+  padding: 0;
+  margin: 32px 0px;
+}
+.skills-heading {
+  margin: 15px 0px;
+  margin-top: 25px;
+}
+.skill-image {
+  margin-right: 10px;
+}
+.skill-text {
+  font-family: 'Roboto';
+  font-weight: bold;
+}
+.life-at-company-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.life-at-company-container-heading {
+  font-family: 'Roboto';
+  margin: 20px 0px;
+}
+.life-at-company-container-heading-container {
+  height: 100%;
+  padding: 30px 0px;
+  padding-right: 40px;
+  margin-right: 30px;
+  padding-left: 5px;
+}
+.life-at-company-container-description {
+  font-family: 'Roboto';
+  font-size: 28px;
+  line-height: 38px;
+}
+.life-at-company-image {
+  height: 400px;
+}
+.about-location-package-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+.similar-jobs-heading {
+  font-family: 'Roboto';
+  font-size: 32px;
+  margin: 35px 0px;
+}
+.similar-jobs-ul-container {
+  display: flex;
+  list-style-type: none;
+  flex-wrap: wrap;
+}
