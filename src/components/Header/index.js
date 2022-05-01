@@ -31,11 +31,11 @@ const Header = props => {
             </Link>
           </li>
         </ul>
-        <div>
+        <li>
           <button onClick={clickLogout} className="logout-btn" type="button">
             Logout
           </button>
-        </div>
+        </li>
       </div>
     </nav>
   )

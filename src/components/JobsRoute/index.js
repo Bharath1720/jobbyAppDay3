@@ -1,5 +1,5 @@
 import Cookies from 'js-cookie'
-
+import Loader from 'react-loader-spinner'
 import {Component} from 'react'
 import './index.css'
 import {BsSearch} from 'react-icons/bs'
@@ -43,7 +43,18 @@ const salaryRangesList = [
     label: '40 LPA and above',
   },
 ]
-
+const apiStatusConstants = {
+  initial: 'INITIAL',
+  success: 'SUCCESS',
+  failure: 'FAILURE',
+  inProgress: 'IN_PROGRESS',
+}
+const apiJobStatusConstants = {
+  initial: 'INITIAL',
+  success: 'SUCCESS',
+  failure: 'FAILURE',
+  inProgress: 'IN_PROGRESS',
+}
 class JobsRoute extends Component {
   state = {
     profileDetails: {},
@@ -51,6 +62,8 @@ class JobsRoute extends Component {
     checkboxInput: [],
     radioInput: '',
     searchInput: '',
+    apiStatus: apiStatusConstants.initial,
+    apiJobStatus: apiJobStatusConstants.initial,
   }
 
   componentDidMount() {
@@ -59,6 +72,9 @@ class JobsRoute extends Component {
   }
 
   getProfileData = async () => {
+    this.setState({
+      apiStatus: apiStatusConstants.inProgress,
+    })
     const jwtToken = Cookies.get('jwt_token')
     const profileApiUrl = 'https://apis.ccbp.in/profile'
     const options = {
@@ -77,11 +93,19 @@ class JobsRoute extends Component {
       }
       this.setState({
         profileDetails: updatedData,
+        apiStatus: apiStatusConstants.success,
+      })
+    } else {
+      this.setState({
+        apiStatus: apiStatusConstants.failure,
       })
     }
   }
 
   getJobData = async () => {
+    this.setState({
+      apiJobStatus: apiJobStatusConstants.inProgress,
+    })
     const {checkboxInput, radioInput, searchInput} = this.state
     const jwtToken = Cookies.get('jwt_token')
     const jobApiUrl = `https://apis.ccbp.in/jobs?employment_type=${checkboxInput}&minimum_package=${radioInput}&search=${searchInput}`
@@ -106,6 +130,11 @@ class JobsRoute extends Component {
       }))
       this.setState({
         jobsDetails: updatedJobData,
+        apiJobStatus: apiJobStatusConstants.success,
+      })
+    } else {
+      this.setState({
+        apiJobStatus: apiJobStatusConstants.failure,
       })
     }
   }
@@ -142,18 +171,6 @@ class JobsRoute extends Component {
     if (event.key === 'Enter') {
       this.getJobData()
     }
-  }
-
-  renderProfileDisplay = () => {
-    const {profileDetails} = this.state
-    const {name, profileImageUrl, shortBio} = profileDetails
-    return (
-      <div className="profile-display-container">
-        <img className="profile-logo" src={profileImageUrl} alt="" />
-        <p className="profile-name">{name}</p>
-        <p className="profile-description">{shortBio}</p>
-      </div>
-    )
   }
 
   renderTypesOfEmployement = () => (
@@ -197,14 +214,115 @@ class JobsRoute extends Component {
     </>
   )
 
+  onGetJobSuccessView = () => {
+    const {jobsDetails} = this.state
+    const noJobsFound = jobsDetails.length === 0
+    return noJobsFound ? (
+      <div className="no-jobs-container">
+        <img
+          src="https://assets.ccbp.in/frontend/react-js/no-jobs-img.png"
+          alt="no jobs"
+        />
+        <h1>No Jobs Found</h1>
+        <p>We could not find any jobs. TRy other filters</p>
+      </div>
+    ) : (
+      <ul>
+        {jobsDetails.map(each => (
+          <JobItemDetailsRoute key={each.id} jobData={each} />
+        ))}
+      </ul>
+    )
+  }
+
+  onGetJobFailureView = () => (
+    <div>
+      <img
+        src="https://assets.ccbp.in/frontend/react-js/failure-img.png"
+        alt="failure view"
+      />
+      <h1>Opps! Something Went Wrong</h1>
+      <p>We cannot seem to find the page you are looking for </p>
+      <div className="failure-btn-container">
+        <button type="button" onClick={this.retryBtn}>
+          retry
+        </button>
+      </div>
+    </div>
+  )
+
+  onGetJobLoadingView = () => (
+    <div className="loader-container" testid="loader">
+      <Loader type="ThreeDots" color="#ffffff" height="50" width="50" />
+    </div>
+  )
+
+  onGetProfileSuccessView = () => {
+    const {profileDetails} = this.state
+    const {name, profileImageUrl, shortBio} = profileDetails
+    return (
+      <div className="profile-display-container">
+        <img className="profile-logo" src={profileImageUrl} alt="" />
+        <p className="profile-name">{name}</p>
+        <p className="profile-description">{shortBio}</p>
+      </div>
+    )
+  }
+
+  retryBtn = () => {
+    this.getProfileData()
+  }
+
+  onGetProfileFailureView = () => (
+    <div>
+      <button type="button" onClick={this.retryBtn()}>
+        retry
+      </button>
+    </div>
+  )
+
+  renderLoadingView = () => (
+    <div className="loader-container" testid="loader">
+      <Loader type="ThreeDots" color="#ffffff" height="50" width="50" />
+    </div>
+  )
+
+  renderProfileStatusDisplay = () => {
+    const {apiStatus} = this.state
+    switch (apiStatus) {
+      case apiStatusConstants.success:
+        return this.onGetProfileSuccessView()
+      case apiStatusConstants.failure:
+        return this.onGetProfileFailureView()
+      case apiStatusConstants.loading:
+        return this.renderLoadingView()
+      default:
+        return null
+    }
+  }
+
+  onRenderJObApiStaus = () => {
+    const {apiJobStatus} = this.state
+    switch (apiJobStatus) {
+      case apiJobStatusConstants.success:
+        return this.onGetJobSuccessView()
+      case apiJobStatusConstants.failure:
+        return this.onGetJobFailureView()
+      case apiJobStatusConstants.inProgress:
+        return this.onGetJobLoadingView()
+      default:
+        return null
+    }
+  }
+
   render() {
-    const {checkboxInput, radioInput, searchInput, jobsDetails} = this.state
+    const {searchInput} = this.state
     return (
       <>
         <Header />
         <div className="jobs-bg-container">
           <div className="profile-container">
-            {this.renderProfileDisplay()}
+            {this.renderProfileStatusDisplay()}
             {this.renderTypesOfEmployement()}
             {this.renderSalaryRange()}
           </div>
@@ -221,11 +339,12 @@ class JobsRoute extends Component {
                 <BsSearch className="search-icon" />
               </button>
             </div>
-            <ul>
+            {/* <ul>
               {jobsDetails.map(each => (
                 <JobItemDetailsRoute key={each.id} jobData={each} />
               ))}
-            </ul>
+            </ul> */}
+            {this.onRenderJObApiStaus()}
           </div>
         </div>
       </>

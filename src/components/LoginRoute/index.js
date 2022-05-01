@@ -106,7 +106,7 @@ class LoginRoute extends Component {
           <img
             className="logo"
             src="https://assets.ccbp.in/frontend/react-js/logo-img.png"
-            alt="logo"
+            alt="website logo"
           />
           <div className="input-container">{this.renderUsernameField()}</div>
           <div className="input-container">{this.renderPasswordField()}</div>
