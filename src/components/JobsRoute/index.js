@@ -156,9 +156,12 @@ class JobsRoute extends Component {
   }
 
   radioOption = event => {
-    this.setState({
-      radioInput: event.target.id,
-    })
+    this.setState(
+      {
+        radioInput: event.target.id,
+      },
+      this.getJobData,
+    )
   }
 
   onChangeSearchInput = event => {
@@ -172,47 +175,6 @@ class JobsRoute extends Component {
       this.getJobData()
     }
   }
-
-  renderTypesOfEmployement = () => (
-    <>
-      <ul className="types-of-employment">
-        <h3 className="types-heading">Type of Employment</h3>
-        {employmentTypesList.map(each => (
-          <li className="li-types-of-employment" key={each.employmentTypeId}>
-            <input
-              className="checkbox-style"
-              type="checkbox"
-              id={each.employmentTypeId}
-              onChange={this.checkBoxOption}
-            />
-            <label htmlFor={each.employmentTypeId}>{each.label}</label>
-          </li>
-        ))}
-      </ul>
-      <hr className="hr-line" />
-    </>
-  )
-
-  renderSalaryRange = () => (
-    <>
-      <ul className="types-of-employment">
-        <h3 className="types-heading">Salary Range</h3>
-        {salaryRangesList.map(each => (
-          <li className="li-types-of-employment" key={each.salaryRangeId}>
-            <input
-              className="checkbox-style"
-              type="radio"
-              id={each.salaryRangeId}
-              name="salary"
-              onChange={this.radioOption}
-            />
-            <label htmlFor={each.salaryRangeId}>{each.label}</label>
-          </li>
-        ))}
-      </ul>
-      <hr className="hr-line" />
-    </>
-  )
 
   onGetJobSuccessView = () => {
     const {jobsDetails} = this.state
@@ -262,8 +224,8 @@ class JobsRoute extends Component {
     const {name, profileImageUrl, shortBio} = profileDetails
     return (
       <div className="profile-display-container">
-        <img className="profile-logo" src={profileImageUrl} alt="" />
-        <p className="profile-name">{name}</p>
+        <img className="profile-logo" src={profileImageUrl} alt="profile" />
+        <h1 className="profile-name">{name}</h1>
         <p className="profile-description">{shortBio}</p>
       </div>
     )
@@ -275,7 +237,7 @@ class JobsRoute extends Component {
 
   onGetProfileFailureView = () => (
     <div>
-      <button type="button" onClick={this.retryBtn()}>
+      <button type="button" onClick={this.retryBtn}>
         retry
       </button>
     </div>
@@ -301,6 +263,25 @@ class JobsRoute extends Component {
     }
   }
 
+  renderSalaryRange = () => (
+    <>
+      <ul className="types-of-employment">
+        {salaryRangesList.map(each => (
+          <li className="li-types-of-employment" key={each.salaryRangeId}>
+            <input
+              className="checkbox-style"
+              type="radio"
+              id={each.salaryRangeId}
+              name="salary"
+              onChange={this.radioOption}
+            />
+            <label htmlFor={each.salaryRangeId}>{each.label}</label>
+          </li>
+        ))}
+      </ul>
+    </>
+  )
+
   onRenderJObApiStaus = () => {
     const {apiJobStatus} = this.state
     switch (apiJobStatus) {
@@ -315,6 +296,28 @@ class JobsRoute extends Component {
     }
   }
 
+  onSubmitSearch = () => {
+    this.getJobData()
+  }
+
+  renderTypesOfEmployement = () => (
+    <>
+      <ul className="types-of-employment">
+        {employmentTypesList.map(each => (
+          <li className="li-types-of-employment" key={each.employmentTypeId}>
+            <input
+              className="checkbox-style"
+              type="checkbox"
+              id={each.employmentTypeId}
+              onChange={this.checkBoxOption}
+            />
+            <label htmlFor={each.employmentTypeId}>{each.label}</label>
+          </li>
+        ))}
+      </ul>
+    </>
+  )
+
   render() {
     const {searchInput} = this.state
     return (
@@ -323,8 +326,12 @@ class JobsRoute extends Component {
         <div className="jobs-bg-container">
           <div className="profile-container">
             {this.renderProfileStatusDisplay()}
+            <h1 className="types-heading">Type of Employment</h1>
             {this.renderTypesOfEmployement()}
+            <hr className="hr-line" />
+            <h1 className="types-heading">Salary Range</h1>
             {this.renderSalaryRange()}
+            <hr className="hr-line" />
           </div>
           <div className="job-details-container">
             <div className="search-container">
@@ -335,7 +342,12 @@ class JobsRoute extends Component {
                 onChange={this.onChangeSearchInput}
                 onKeyDown={this.onEnterClicked}
               />
-              <button className="btn-si" type="button" testid="searchButton">
+              <button
+                className="btn-si"
+                type="button"
+                testid="searchButton"
+                onClick={this.onSubmitSearch}
+              >
                 <BsSearch className="search-icon" />
               </button>
             </div>

@@ -4,7 +4,7 @@ import {MdLocationOn} from 'react-icons/md'
 import {AiFillStar} from 'react-icons/ai'
 import {BiLinkExternal} from 'react-icons/bi'
 import {BsBriefcaseFill} from 'react-icons/bs'
-//  import Loader from 'react-loader-spinner'
+import Loader from 'react-loader-spinner'
 import Header from '../Header'
 import SimilarJobs from '../SimilarJobs'
 import './index.css'
@@ -80,6 +80,10 @@ class AboutJobItem extends Component {
         similarJobsData: updatedSimilarJobsData,
         apiStatus: apiStatusConstants.success,
       })
+    } else {
+      this.setState({
+        apiStatus: apiStatusConstants.failure,
+      })
     }
   }
 
@@ -89,7 +93,6 @@ class AboutJobItem extends Component {
       companyLogoUrl,
       companyWebsiteUrl,
       employmentType,
-      id,
       jobDescription,
       lifeAtCompany,
       location,
@@ -103,12 +106,16 @@ class AboutJobItem extends Component {
         <div className="about-job-items-container">
           <div className="job-item-details-main">
             <div className="job-item-header">
-              <img className="job-title-logo" src={companyLogoUrl} alt={id} />
+              <img
+                className="job-title-logo"
+                src={companyLogoUrl}
+                alt="job details company logo"
+              />
               <div className="title-rating-container">
                 <h1 className="job-title-heading">{title}</h1>
                 <div className="rating-star-container">
                   <AiFillStar className="rating-icon" />
-                  <span>{rating}</span>
+                  <p>{rating}</p>
                 </div>
               </div>
             </div>
@@ -177,12 +184,45 @@ class AboutJobItem extends Component {
     )
   }
 
+  onRetryJobDetailsAgain = () => {
+    this.getJobItemData()
+  }
+
+  renderJobDetailsFailureView = () => (
+    <div className="job-details-failure-view">
+      <img
+        src="https://assets.ccbp.in/frontend/react-js/failure-img.png"
+        alt="failure view"
+      />
+      <h1>Oops! Something Went Wrong</h1>
+      <p>we cannot seem to find the page you are looking for.</p>
+      <div className="btn-container-failure">
+        <button
+          className="failure-jod-details-btn"
+          type="button"
+          onClick={this.onRetryJobDetailsAgain}
+        >
+          retry
+        </button>
+      </div>
+    </div>
+  )
+
+  renderJobDetailsLoadingView = () => (
+    <div className="job-details-loader" testid="loader">
+      <Loader type="ThreeDots" color="#0b69ff" height="50" width="50" />
+    </div>
+  )
+
   renderJobDetails = () => {
     const {apiStatus} = this.state
-
     switch (apiStatus) {
       case apiStatusConstants.success:
         return this.renderJobDetailsSuccessView()
+      case apiStatusConstants.failure:
+        return this.renderJobDetailsFailureView()
+      case apiStatusConstants.inProgress:
+        return this.renderJobDetailsLoadingView()
       default:
         return null
     }

@@ -21,12 +21,16 @@ const JobItemDetailsRoute = props => {
     <Link to={`/jobs/${id}`} className="job-link-item">
       <li className="job-details-li">
         <div className="job-item-header">
-          <img className="job-title-logo" src={companyLogoUrl} alt={id} />
+          <img
+            className="job-title-logo"
+            src={companyLogoUrl}
+            alt="company logo"
+          />
           <div className="title-rating-container">
             <h1 className="job-title-heading">{title}</h1>
             <div className="rating-star-container">
               <AiFillStar className="rating-icon" />
-              <span>{rating}</span>
+              <p>{rating}</p>
             </div>
           </div>
         </div>
